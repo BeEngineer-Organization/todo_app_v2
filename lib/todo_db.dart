@@ -8,12 +8,14 @@ class TodoItem {
     required this.title,
     required this.content,
     required this.isCompleted,
+    required this.priority,
   });
 
   final int id;
   final String title;
   final String content;
   final bool isCompleted;
+  final int priority;
 
   Map<String, dynamic> toMap() {
     return {
@@ -21,25 +23,28 @@ class TodoItem {
       'title': title,
       'content': content,
       'isCompleted': isCompleted,
+      'priority': priority,
     };
   }
 
-  @override
-  String toString() {
-    return 'TodoItem{id: $id, title: $title, content: $content, isCompleted: $isCompleted}';
-  }
+  // @override
+  // String toString() {
+  //   return 'TodoItem{id: $id, title: $title, content: $content, isCompleted: $isCompleted, priority:$priority}';
+  // }
 
   TodoItem copyWith({
     int? id,
     String? title,
     String? content,
     bool? isCompleted,
+    int? priority,
   }) {
     return TodoItem(
       id: id ?? this.id,
       title: title ?? this.title,
       content: content ?? this.content,
       isCompleted: isCompleted ?? this.isCompleted,
+      priority: priority ?? this.priority,
     );
   }
 }
@@ -56,7 +61,7 @@ class TodoItemDatabase {
       join(await getDatabasesPath(), 'TodoItem_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE TodoItem(id INTEGER PRIMARY KEY, title TEXT, content TEXT, isCompleted INTEGER)',
+          'CREATE TABLE TodoItem(id INTEGER PRIMARY KEY, title TEXT, content TEXT, isCompleted INTEGER, priority INTEGER)',
         );
       },
       version: 1,
@@ -81,6 +86,7 @@ class TodoItemDatabase {
         title: maps[i]['title'],
         content: maps[i]['content'],
         isCompleted: maps[i]['isCompleted'],
+        priority: maps[i]['priority'],
       );
     });
   }
@@ -93,15 +99,6 @@ class TodoItemDatabase {
       where: 'id = ?',
       whereArgs: [todoItem.id],
       conflictAlgorithm: ConflictAlgorithm.fail,
-    );
-  }
-
-  Future<void> deleteTodoItem(int id) async {
-    final db = await database;
-    await db.delete(
-      'TodoItem',
-      where: 'id = ?',
-      whereArgs: [id],
     );
   }
 }

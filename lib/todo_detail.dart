@@ -50,6 +50,27 @@ class TodoDetailPage extends ConsumerWidget {
                   child: Text(todos[index].content), // 修正
                 ),
               ),
+              Row(
+                children: [
+                  const Text('優先度:'),
+                  FutureBuilder<String>(
+                    future: todoNotifier.getPriorityRank(todos[index].id),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text(
+                            'loading...'); // データを待っている間に表示するウィジェット
+                      } else if (snapshot.hasError) {
+                        return Text(
+                            'Error: ${snapshot.error}'); // エラーが発生した場合に表示するウィジェット
+                      } else {
+                        return Text(
+                            '${snapshot.data}'); // データが利用可能になったときに表示するウィジェット
+                      }
+                    },
+                  ),
+                ],
+              ),
               SizedBox(
                 width: 300,
                 height: 40,

@@ -13,8 +13,6 @@ class TodoListPage extends ConsumerWidget {
     // ref.watch を使用
     final todos = ref.watch(todoProvider);
     final todoNotifier = ref.read(todoProvider.notifier);
-    final completedItemCount = todoNotifier.getCompletedItemCount();
-    final incompletedItemCount = todoNotifier.getIncompletedItemCount();
     final bottomBarIndex = ref.watch(bottomBarProvider);
     final bottomBarIndexNotifier = ref.read(bottomBarProvider.notifier);
     return Scaffold(

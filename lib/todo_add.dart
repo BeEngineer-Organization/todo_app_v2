@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // 追加
-import '/providers_db.dart'; // 追加
+import '/providers_db.dart' show todoProvider; // 追加
 
 class TodoAddPage extends ConsumerStatefulWidget {
-  const TodoAddPage({super.key});
+  const TodoAddPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<TodoAddPage> createState() => _TodoAddPageState(); // 修正
@@ -14,7 +14,8 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
   final formKey = GlobalKey<FormState>();
   final titleFormKey = GlobalKey<FormFieldState<String>>();
   final contentFormKey = GlobalKey<FormFieldState<String>>();
-  Map<String, String> formValue = {};
+  Map<String, dynamic> formValue = {};
+  int _value = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +71,55 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                   },
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Row(
+                    children: [
+                      Radio(
+                        value: 0,
+                        groupValue: _value,
+                        onChanged: (int? value) {
+                          setState(() {
+                            _value = value!;
+                          });
+                        },
+                      ),
+                      const Text('low')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                        value: 1,
+                        groupValue: _value,
+                        onChanged: (int? value) {
+                          setState(
+                            () {
+                              _value = value!;
+                            },
+                          );
+                        },
+                      ),
+                      const Text('medium')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                        value: 2,
+                        groupValue: _value,
+                        onChanged: (int? value) {
+                          setState(() {
+                            _value = value!;
+                          });
+                        },
+                      ),
+                      const Text('high')
+                    ],
+                  ),
+                ],
+              ),
               SizedBox(
                 width: 300,
                 height: 40,
@@ -80,10 +130,12 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                           titleFormKey.currentState?.value ?? '';
                       formValue['content'] =
                           contentFormKey.currentState?.value ?? '';
+                      formValue['priority'] = _value;
                       ref
                           .read(todoProvider.notifier)
                           .addTodoItem(formValue); // 修正
                       Navigator.of(context).pop();
+                      debugPrint('${_value}');
                     }
                   },
                   child: const Text('Todo を追加'),

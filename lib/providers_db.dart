@@ -21,12 +21,13 @@ class TodoList extends StateNotifier<List<TodoItem>> {
     state = await _database.getTodoItems();
   }
 
-  Future<void> addTodoItem(Map<String, String> formValue) async {
+  Future<void> addTodoItem(Map<String, dynamic> formValue) async {
     TodoItem item = TodoItem(
       id: state.length,
       title: formValue['title']!,
       content: formValue['content']!,
       isCompleted: false,
+      priority: formValue['priority']!,
     );
     await _database.insertTodoItem(item);
     final updatedList = [...state, item];
@@ -51,10 +52,17 @@ class TodoList extends StateNotifier<List<TodoItem>> {
     return completedItemLength;
   }
 
-  Future<int> sumCount() async {
-    await _database.getTodoItems();
-    final allItemLength = state.length;
-    return allItemLength;
+  Future<String> getPriorityRank(int index) async {
+    int Rank = state.firstWhere((i) => i.id == index).priority;
+    String priorityRank;
+    if (Rank == 0) {
+      priorityRank = "低";
+    } else if (Rank == 1) {
+      priorityRank = "中";
+    } else {
+      priorityRank = "高";
+    }
+    return priorityRank;
   }
 }
 
