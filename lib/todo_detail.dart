@@ -47,29 +47,38 @@ class TodoDetailPage extends ConsumerWidget {
                   margin: const EdgeInsets.all(8),
                   width: 300,
                   height: 200,
-                  child: Text(todos[index].content), // 修正
+                  child: Text(todos[index].deadline), // 修正
                 ),
               ),
-              Row(
-                children: [
-                  const Text('優先度:'),
-                  FutureBuilder<String>(
-                    future: todoNotifier.getPriorityRank(todos[index].id),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Text(
-                            'loading...'); // データを待っている間に表示するウィジェット
-                      } else if (snapshot.hasError) {
-                        return Text(
-                            'Error: ${snapshot.error}'); // エラーが発生した場合に表示するウィジェット
-                      } else {
-                        return Text(
-                            '${snapshot.data}'); // データが利用可能になったときに表示するウィジェット
-                      }
-                    },
-                  ),
-                ],
+              Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  children: [
+                    const Text('優先度:'),
+                    FutureBuilder<String>(
+                      future: todoNotifier.getPriorityRank(todos[index].id),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                              'loading...'); // データを待っている間に表示するウィジェット
+                        } else if (snapshot.hasError) {
+                          return Text(
+                              'Error: ${snapshot.error}'); // エラーが発生した場合に表示するウィジェット
+                        } else {
+                          return Text(
+                              '${snapshot.data}'); // データが利用可能になったときに表示するウィジェット
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                alignment: Alignment.centerLeft,
+                margin: const EdgeInsets.only(bottom: 10),
+                child: Text('期限: ${todos[index].deadline}'),
               ),
               SizedBox(
                 width: 300,

@@ -28,6 +28,7 @@ class TodoList extends StateNotifier<List<TodoItem>> {
       content: formValue['content']!,
       isCompleted: false,
       priority: formValue['priority']!,
+      deadline: formValue['deadline'] ?? '',
     );
     await _database.insertTodoItem(item);
     final updatedList = [...state, item];
@@ -53,14 +54,14 @@ class TodoList extends StateNotifier<List<TodoItem>> {
   }
 
   Future<String> getPriorityRank(int index) async {
-    int Rank = state.firstWhere((i) => i.id == index).priority;
+    int rank = state.firstWhere((i) => i.id == index).priority;
     String priorityRank;
-    if (Rank == 0) {
-      priorityRank = "低";
-    } else if (Rank == 1) {
+    if (rank == 0) {
+      priorityRank = "高";
+    } else if (rank == 1) {
       priorityRank = "中";
     } else {
-      priorityRank = "高";
+      priorityRank = "低";
     }
     return priorityRank;
   }

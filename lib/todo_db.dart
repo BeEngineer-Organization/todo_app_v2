@@ -9,6 +9,7 @@ class TodoItem {
     required this.content,
     required this.isCompleted,
     required this.priority,
+    required this.deadline,
   });
 
   final int id;
@@ -16,6 +17,7 @@ class TodoItem {
   final String content;
   final bool isCompleted;
   final int priority;
+  final String deadline;
 
   Map<String, dynamic> toMap() {
     return {
@@ -24,6 +26,7 @@ class TodoItem {
       'content': content,
       'isCompleted': isCompleted,
       'priority': priority,
+      'deadline': deadline,
     };
   }
 
@@ -38,6 +41,7 @@ class TodoItem {
     String? content,
     bool? isCompleted,
     int? priority,
+    String? deadline,
   }) {
     return TodoItem(
       id: id ?? this.id,
@@ -45,6 +49,7 @@ class TodoItem {
       content: content ?? this.content,
       isCompleted: isCompleted ?? this.isCompleted,
       priority: priority ?? this.priority,
+      deadline: deadline ?? this.deadline,
     );
   }
 }
@@ -61,7 +66,7 @@ class TodoItemDatabase {
       join(await getDatabasesPath(), 'TodoItem_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE TodoItem(id INTEGER PRIMARY KEY, title TEXT, content TEXT, isCompleted INTEGER, priority INTEGER)',
+          'CREATE TABLE TodoItem(id INTEGER PRIMARY KEY, title TEXT, content TEXT, isCompleted INTEGER, priority INTEGER, deadline TEXT)',
         );
       },
       version: 1,
@@ -87,6 +92,7 @@ class TodoItemDatabase {
         content: maps[i]['content'],
         isCompleted: maps[i]['isCompleted'],
         priority: maps[i]['priority'],
+        deadline: maps[i]['deadline'],
       );
     });
   }

@@ -14,6 +14,10 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
   final formKey = GlobalKey<FormState>();
   final titleFormKey = GlobalKey<FormFieldState<String>>();
   final contentFormKey = GlobalKey<FormFieldState<String>>();
+  final priorityFormKey = GlobalKey<FormFieldState<String>>();
+  final priorityController = TextEditingController();
+  final deadlineFormKey = GlobalKey<FormFieldState<String>>();
+  final deadlineController = TextEditingController();
   Map<String, dynamic> formValue = {};
   int _value = 1;
 
@@ -85,7 +89,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                           });
                         },
                       ),
-                      const Text('low')
+                      const Text('高')
                     ],
                   ),
                   Row(
@@ -101,7 +105,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                           );
                         },
                       ),
-                      const Text('medium')
+                      const Text('中')
                     ],
                   ),
                   Row(
@@ -115,10 +119,40 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                           });
                         },
                       ),
-                      const Text('high')
+                      const Text('低')
                     ],
                   ),
                 ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 32),
+                padding: const EdgeInsets.all(4),
+                width: 300,
+                child: TextFormField(
+                    key: deadlineFormKey,
+                    controller: deadlineController,
+                    decoration: const InputDecoration(
+                      labelText: "Deadline",
+                    ),
+                    onTap: () async {
+                      FocusScope.of(context)
+                          .requestFocus(new FocusNode()); //キーボードを非表示
+                      DateTime? date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2022),
+                        lastDate: DateTime(2100),
+                      );
+                      if (date != null) {
+                        deadlineController.text =
+                            date.toIso8601String().substring(0, 10);
+                      }
+                    },
+                    validator: (value) {
+                      return value == null || value.isEmpty
+                          ? '期限を決めてください。'
+                          : null;
+                    }),
               ),
               SizedBox(
                 width: 300,
@@ -131,11 +165,12 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                       formValue['content'] =
                           contentFormKey.currentState?.value ?? '';
                       formValue['priority'] = _value;
+                      formValue['deadline'] =
+                          deadlineFormKey.currentState?.value ?? '';
                       ref
                           .read(todoProvider.notifier)
                           .addTodoItem(formValue); // 修正
                       Navigator.of(context).pop();
-                      debugPrint('${_value}');
                     }
                   },
                   child: const Text('Todo を追加'),
