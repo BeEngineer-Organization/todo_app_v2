@@ -28,7 +28,7 @@ class TodoDetailPage extends ConsumerWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Text('ロード中...');
                 } else if (snapshot.hasError) {
-                  return const Text('エラーです');
+                  return Text('${snapshot.error}');
                 } else if (snapshot.data == null) {
                   throw Exception('データが空です。');
                 } else {
@@ -62,8 +62,27 @@ class TodoDetailPage extends ConsumerWidget {
                             margin: const EdgeInsets.all(8),
                             width: 300,
                             height: 200,
-                            child: Text(todoItem.content), // 修正
+                            child: Text(
+                              todoItem.content,
+                            ), // 修正
                           ),
+                        ),
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            margin: const EdgeInsets.only(bottom: 10),
+                            child: Builder(builder: (BuildContext context) {
+                              if (todoItem.priority == 0) {
+                                return const Text('優先度：高');
+                              } else if (todoItem.priority == 1) {
+                                return const Text('優先度：中');
+                              } else {
+                                return const Text('優先度：低');
+                              }
+                            })),
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: Text('期限: ${todoItem.deadline}'),
                         ),
                         SizedBox(
                           width: 300,

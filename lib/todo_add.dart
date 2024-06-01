@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // 追加
 import 'todo_db.dart';
@@ -15,7 +17,12 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
   final formKey = GlobalKey<FormState>();
   final titleFormKey = GlobalKey<FormFieldState<String>>();
   final contentFormKey = GlobalKey<FormFieldState<String>>();
-  final Map<String, String> formValue = {};
+  final priorityFormKey = GlobalKey<FormFieldState<String>>();
+  final priorityController = TextEditingController();
+  final deadlineFormKey = GlobalKey<FormFieldState<String>>();
+  final deadlineController = TextEditingController();
+  final Map<String, dynamic> formValueStr = {};
+  int _value = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +80,85 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                   },
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Row(
+                    children: [
+                      Radio(
+                        value: 0,
+                        groupValue: _value,
+                        onChanged: (int? value) {
+                          setState(() {
+                            _value = value!;
+                          });
+                        },
+                      ),
+                      const Text('高')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                        value: 1,
+                        groupValue: _value,
+                        onChanged: (int? value) {
+                          setState(
+                            () {
+                              _value = value!;
+                            },
+                          );
+                        },
+                      ),
+                      const Text('中')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio(
+                        value: 2,
+                        groupValue: _value,
+                        onChanged: (int? value) {
+                          setState(() {
+                            _value = value!;
+                          });
+                        },
+                      ),
+                      const Text('低')
+                    ],
+                  ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 32),
+                padding: const EdgeInsets.all(4),
+                width: 300,
+                child: TextFormField(
+                    key: deadlineFormKey,
+                    controller: deadlineController,
+                    decoration: const InputDecoration(
+                      labelText: "Deadline",
+                    ),
+                    onTap: () async {
+                      FocusScope.of(context)
+                          .requestFocus(new FocusNode()); //キーボードを非表示
+                      DateTime? date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2022),
+                        lastDate: DateTime(2100),
+                      );
+                      if (date != null) {
+                        deadlineController.text =
+                            date.toIso8601String().substring(0, 10);
+                      }
+                    },
+                    validator: (value) {
+                      return value == null || value.isEmpty
+                          ? '期限を決めてください。'
+                          : null;
+                    }),
+              ),
               asyncValue.when(
                 data: (_) {
                   return SizedBox(
@@ -81,11 +167,14 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (formKey.currentState!.validate()) {
-                          formValue['title'] =
+                          formValueStr['title'] =
                               titleFormKey.currentState?.value ?? '';
-                          formValue['content'] =
+                          formValueStr['content'] =
                               contentFormKey.currentState?.value ?? ''; // 修正
-                          database.insertTodoItem(formValue);
+                          formValueStr['priority'] = _value;
+                          formValueStr['deadline'] =
+                              deadlineFormKey.currentState?.value ?? '';
+                          database.insertTodoItem(formValueStr);
                           ref.refresh(todoProvider);
                           Navigator.of(context).pop();
                         }
