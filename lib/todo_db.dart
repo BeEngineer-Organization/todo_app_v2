@@ -21,7 +21,7 @@ class TodoItem {
       'id': id,
       'title': title,
       'content': content,
-      'isCompleted': isCompleted,
+      'isCompleted': isCompleted ? 1 : 0,
     };
   }
 
@@ -46,16 +46,12 @@ class TodoItem {
 }
 
 class TodoItemDatabase {
-  TodoItemDatabase() {
-    initDatabase();
-  }
-
-  late Future<Database> database;
+  late final Future<Database> database = initDatabase();
 
   get i => null;
 
-  Future<void> initDatabase() async {
-    database = openDatabase(
+  Future<Database> initDatabase() async {
+    return openDatabase(
       join(await getDatabasesPath(), 'TodoItem_database.db'),
       onCreate: (db, version) {
         return db.execute(
@@ -73,7 +69,7 @@ class TodoItemDatabase {
       {
         "title": formValue['title'],
         "content": formValue['content'],
-        'isCompleted': 'false'
+        'isCompleted': 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -87,14 +83,24 @@ class TodoItemDatabase {
         id: maps[i]['id'],
         title: maps[i]['title'],
         content: maps[i]['content'],
-        isCompleted: maps[i]['isCompleted'],
+        isCompleted: maps[i]['isCompleted'] == 1,
       );
     });
   }
 
   Future<TodoItem> showTodoItem(int index) async {
-    final List<TodoItem> todoItems = await getTodoItems();
-    return todoItems[index];
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'TodoItem',
+      where: 'id = ?',
+      whereArgs: [index],
+    );
+    return TodoItem(
+      id: maps[0]['id'],
+      title: maps[0]['title'],
+      content: maps[0]['content'],
+      isCompleted: maps[0]['isCompleted'] == 1,
+    );
   }
 
   Future<int> getTodoItemsCount() async {
@@ -122,7 +128,7 @@ class TodoItemDatabase {
     final db = await database;
     await db.update(
       'TodoItem',
-      {'isCompleted': isCompleted ? 1 : 0},
+      {'isCompleted': isCompleted ? 0 : 1},
       where: 'id = ?',
       whereArgs: [index],
       conflictAlgorithm: ConflictAlgorithm.fail,

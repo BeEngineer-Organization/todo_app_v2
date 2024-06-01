@@ -28,7 +28,7 @@ class TodoDetailPage extends ConsumerWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Text('ロード中...');
                 } else if (snapshot.hasError) {
-                  return const Text('エラーが起きました');
+                  return const Text('エラーです');
                 } else if (snapshot.data == null) {
                   throw Exception('データが空です。');
                 } else {
@@ -72,6 +72,7 @@ class TodoDetailPage extends ConsumerWidget {
                             onPressed: () {
                               database.changeTodoItem(
                                   index, todoItem.isCompleted); // 修正
+                              ref.refresh(todoProvider);
                               Navigator.of(context).pop();
                             },
                             child: todoItem.isCompleted // 修正

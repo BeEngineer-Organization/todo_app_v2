@@ -32,9 +32,8 @@ class TodoListPage extends ConsumerWidget {
               if (snapshot.hasError) {
                 return Text('Errors:${snapshot.error}');
               } else {
-                int completedItemLength = snapshot.data![0];
-                int inCompletedItemLength = snapshot.data![1];
-                int sum = completedItemLength + inCompletedItemLength;
+                int sum = snapshot.data![0];
+                int completedItemLength = snapshot.data![1];
                 return Text('ToDo 一覧（完了済み $completedItemLength/$sum)');
               }
             }
@@ -50,33 +49,41 @@ class TodoListPage extends ConsumerWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Text('いるのこれ');
                 } else if (snapshot.hasError) {
-                  return const Text('起きた時に考えろ');
+                  return Text('${snapshot.error}');
                 } else {
                   final todoItems = snapshot.data ?? [];
                   return ListView.builder(
                       itemCount: todoItems.length,
                       itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                              '${todoItems[index].id + 1} ${todoItems[index].title}'),
-                          trailing: Checkbox(
-                            activeColor: Colors.green,
-                            checkColor: Colors.white,
-                            onChanged: (value) {
-                              // チェックボックスが変更されたときの処理
-                              database.changeTodoItem(todoItems[index].id,
-                                  todoItems[index].isCompleted);
+                        if (todoItems[index].isCompleted == false &&
+                                bottomBarIndex == 0 ||
+                            todoItems[index].isCompleted == true &&
+                                bottomBarIndex == 1) {
+                          return ListTile(
+                            title: Text(
+                                '${todoItems[index].id} ${todoItems[index].title}'),
+                            trailing: Checkbox(
+                              activeColor: Colors.green,
+                              checkColor: Colors.white,
+                              onChanged: (value) {
+                                // チェックボックスが変更されたときの処理
+                                database.changeTodoItem(todoItems[index].id,
+                                    todoItems[index].isCompleted);
+                                ref.refresh(todoProvider);
+                              },
+                              value: todoItems[index].isCompleted,
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                // 詳細ページには、タップされたアイテムのインデックスを伝える
+                                '/detail',
+                                arguments: todoItems[index].id,
+                              );
                             },
-                            value: todoItems[index].isCompleted,
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pushNamed(
-                              // 詳細ページには、タップされたアイテムのインデックスを伝える
-                              '/detail',
-                              arguments: todoItems[index].id,
-                            );
-                          },
-                        );
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
                       });
                 }
               },
