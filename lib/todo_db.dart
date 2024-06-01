@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -51,23 +52,29 @@ class TodoItemDatabase {
 
   late Future<Database> database;
 
+  get i => null;
+
   Future<void> initDatabase() async {
     database = openDatabase(
       join(await getDatabasesPath(), 'TodoItem_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE TodoItem(id INTEGER PRIMARY KEY, title TEXT, content TEXT, isCompleted INTEGER)',
+          'CREATE TABLE TodoItem(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, isCompleted INTEGER)',
         );
       },
       version: 1,
     );
   }
 
-  Future<void> insertTodoItem(TodoItem todoItem) async {
+  Future<void> insertTodoItem(Map<String, dynamic> formValue) async {
     final db = await database;
     await db.insert(
       'TodoItem',
-      todoItem.toMap(),
+      {
+        "title": formValue['title'],
+        "content": formValue['content'],
+        'isCompleted': 'false'
+      },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -85,6 +92,21 @@ class TodoItemDatabase {
     });
   }
 
+  Future<TodoItem> showTodoItem(int index) async {
+    final List<TodoItem> todoItems = await getTodoItems();
+    return todoItems[index];
+  }
+
+  Future<int> getTodoItemsCount() async {
+    final List<TodoItem> todoItems = await getTodoItems();
+    return todoItems.length;
+  }
+
+  Future<int> getCompletedTodoItemsCount() async {
+    final List<TodoItem> todoItems = await getTodoItems();
+    return todoItems.where((item) => item.isCompleted).length;
+  }
+
   Future<void> updateTodoItem(TodoItem todoItem) async {
     final db = await database;
     await db.update(
@@ -92,6 +114,17 @@ class TodoItemDatabase {
       todoItem.toMap(),
       where: 'id = ?',
       whereArgs: [todoItem.id],
+      conflictAlgorithm: ConflictAlgorithm.fail,
+    );
+  }
+
+  Future<void> changeTodoItem(int index, bool isCompleted) async {
+    final db = await database;
+    await db.update(
+      'TodoItem',
+      {'isCompleted': isCompleted ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [index],
       conflictAlgorithm: ConflictAlgorithm.fail,
     );
   }

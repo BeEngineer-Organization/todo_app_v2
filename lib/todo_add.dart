@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // 追加
+import 'todo_db.dart';
 import '/providers_db.dart'; // 追加
 
 class TodoAddPage extends ConsumerStatefulWidget {
@@ -14,11 +15,13 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
   final formKey = GlobalKey<FormState>();
   final titleFormKey = GlobalKey<FormFieldState<String>>();
   final contentFormKey = GlobalKey<FormFieldState<String>>();
-  Map<String, String> formValue = {};
+  final Map<String, String> formValue = {};
 
   @override
   Widget build(BuildContext context) {
     // WidgetRef は書かないでよい
+    final asyncValue = ref.read(todoProvider);
+    final TodoItemDatabase database = TodoItemDatabase();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todo 追加'),
@@ -70,24 +73,29 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                   },
                 ),
               ),
-              SizedBox(
-                width: 300,
-                height: 40,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      formValue['title'] =
-                          titleFormKey.currentState?.value ?? '';
-                      formValue['content'] =
-                          contentFormKey.currentState?.value ?? '';
-                      ref
-                          .read(todoProvider.notifier)
-                          .addTodoItem(formValue); // 修正
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text('Todo を追加'),
-                ),
+              asyncValue.when(
+                data: (_) {
+                  return SizedBox(
+                    width: 300,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          formValue['title'] =
+                              titleFormKey.currentState?.value ?? '';
+                          formValue['content'] =
+                              contentFormKey.currentState?.value ?? ''; // 修正
+                          database.insertTodoItem(formValue);
+                          ref.refresh(todoProvider);
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Text('Todo を追加'),
+                    ),
+                  );
+                },
+                error: (err, stack) => const Text('失敗'),
+                loading: () => const Text('ロード中・・・'),
               ),
             ],
           ),
