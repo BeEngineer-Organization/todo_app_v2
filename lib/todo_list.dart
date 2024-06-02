@@ -45,9 +45,18 @@ class TodoListPage extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.calendar_month)),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      '/calendar',
+                    );
+                  },
+                  icon: const Icon(Icons.calendar_month)),
               IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.notifications))
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      '/notification',
+                    );
+                  }, icon: const Icon(Icons.notifications))
             ],
           )
         ],
