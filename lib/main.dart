@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'todo_add.dart';
 import 'todo_detail.dart';
 import 'todo_list.dart';
+import 'todo_edit.dart';
 
 void main() {
   runApp(
@@ -28,21 +29,7 @@ class MyTodoApp extends StatelessWidget {
         '/': (context) => const TodoListPage(),
         '/detail': (context) => const TodoDetailPage(),
         '/add': (context) => const TodoAddPage(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/detail') {
-          return MaterialPageRoute(
-            builder: (context) {
-              return const TodoDetailPage();
-            },
-          );
-        } else {
-          return MaterialPageRoute(
-            builder: (context) {
-              return const TodoListPage();
-            },
-          );
-        }
+        '/edit': (context) => const TodoEditPage(),
       },
     );
   }

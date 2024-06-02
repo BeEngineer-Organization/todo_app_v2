@@ -17,8 +17,17 @@ class TodoDetailPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todo 詳細'),
-      ),
+          title:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        const Text('Todo 詳細'),
+        ElevatedButton(
+            child: const Icon(Icons.delete),
+            onPressed: () {
+              database.deleteTodoItem(index);
+              ref.refresh(todoProvider);
+              Navigator.of(context).pop();
+            })
+      ])),
       body: Center(
           child: asyncValue.when(
         data: (todo) {
@@ -99,6 +108,18 @@ class TodoDetailPage extends ConsumerWidget {
                                 : const Text('完了にする'),
                           ),
                         ),
+                        Center(
+                            child: ElevatedButton(
+                                child: const Text('編集する'),
+                                onPressed: () {
+                                  Navigator.of(context).pushNamed(
+                                      // 詳細ページには、タップされたアイテムのインデックスを伝える
+                                      '/edit',
+                                      arguments: {
+                                        "id": index,
+                                        "priority": todoItem.priority
+                                      });
+                                }))
                       ],
                     ),
                   );

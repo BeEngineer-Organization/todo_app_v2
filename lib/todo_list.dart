@@ -13,33 +13,45 @@ class TodoListPage extends ConsumerWidget {
     // WidgetRef を引数に追加
     // 一覧ページでは状態が変化すると同時にウィジェットを再描画する必要があるため
     // ref.watch を使用
-    // final Future<List<TodoItem>> todoItems = database.getTodoItems();
     final asyncValue = ref.watch(todoProvider);
     final bottomBarIndex = ref.watch(bottomBarProvider);
     final bottomBarIndexNotifier = ref.read(bottomBarProvider.notifier);
     final TodoItemDatabase database = TodoItemDatabase();
     return Scaffold(
       appBar: AppBar(
-        title: FutureBuilder<List<int>>(
-          future: Future.wait([
-            database.getTodoItemsCount(),
-            database.getCompletedTodoItemsCount(),
-          ]),
-          builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Text('loading...');
-            } else {
-              if (snapshot.hasError) {
-                return Text('Errors:${snapshot.error}');
+          title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          FutureBuilder<List<int>>(
+            future: Future.wait([
+              database.getTodoItemsCount(),
+              database.getCompletedTodoItemsCount(),
+            ]),
+            builder: (BuildContext context, AsyncSnapshot<List<int>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Text('loading...');
               } else {
-                int sum = snapshot.data![0];
-                int completedItemLength = snapshot.data![1];
-                return Text('ToDo 一覧（完了済み $completedItemLength/$sum)');
+                if (snapshot.hasError) {
+                  return Text('Errors:${snapshot.error}');
+                } else {
+                  int sum = snapshot.data![0];
+                  int completedItemLength = snapshot.data![1];
+                  return Text('ToDo 一覧（完了済み $completedItemLength/$sum)');
+                }
               }
-            }
-          },
-        ),
-      ),
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                  onPressed: () {}, icon: const Icon(Icons.calendar_month)),
+              IconButton(
+                  onPressed: () {}, icon: const Icon(Icons.notifications))
+            ],
+          )
+        ],
+      )),
       body: Center(
         child: asyncValue.when(
           data: (database) {

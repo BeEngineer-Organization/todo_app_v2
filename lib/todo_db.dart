@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
-import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -84,7 +82,7 @@ class TodoItemDatabase {
         "deadline": formValue['deadline'],
         'isCompleted': 0,
       },
-      conflictAlgorithm: ConflictAlgorithm.fail,
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
@@ -130,13 +128,13 @@ class TodoItemDatabase {
     return todoItems.where((item) => item.isCompleted).length;
   }
 
-  Future<void> updateTodoItem(TodoItem todoItem) async {
+  Future<void> updateTodoItem(int index, Map<String, dynamic> formValue) async {
     final db = await database;
     await db.update(
       'TodoItem',
-      todoItem.toMap(),
+      formValue,
       where: 'id = ?',
-      whereArgs: [todoItem.id],
+      whereArgs: [index],
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
