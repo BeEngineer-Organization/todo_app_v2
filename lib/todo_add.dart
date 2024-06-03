@@ -20,7 +20,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
   final deadlineFormKey = GlobalKey<FormFieldState<String>>();
   final deadlineController = TextEditingController();
   final Map<String, dynamic> formValueStr = {};
-  int _value = 1;
+  int _value = 1; //初期化
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +34,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
         key: formKey,
         child: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
+          // タイトル
           Container(
             margin: const EdgeInsets.only(bottom: 32),
             padding: const EdgeInsets.all(4),
@@ -53,6 +54,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
               },
             ),
           ),
+          // 内容
           Container(
             margin: const EdgeInsets.only(bottom: 32),
             padding: const EdgeInsets.all(4),
@@ -73,6 +75,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
               },
             ),
           ),
+          // ラジオボタン
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -122,6 +125,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
               ),
             ],
           ),
+          // 期限日
           Container(
             margin: const EdgeInsets.only(bottom: 32),
             padding: const EdgeInsets.all(4),
@@ -159,7 +163,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                       titleFormKey.currentState?.value ?? '';
                   formValueStr['content'] =
                       contentFormKey.currentState?.value ?? ''; // 修正
-                  formValueStr['priority'] = _value;
+                  formValueStr['priority'] = _value; //優先度
                   formValueStr['deadline'] =
                       deadlineFormKey.currentState?.value ?? '';
                   database.insertTodoItem(formValueStr);

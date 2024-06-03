@@ -13,7 +13,8 @@ class TodoEditPage extends ConsumerStatefulWidget {
 class _TodoEditPageState extends ConsumerState<TodoEditPage> {
   final formKey = GlobalKey<FormState>();
   final titleFormKey = GlobalKey<FormFieldState<String>>();
-  final _titleController = TextEditingController(text: 'initial');
+  final _titleController =
+      TextEditingController(text: 'initial'); //描画1回目のみtext:'initial'
   final contentFormKey = GlobalKey<FormFieldState<String>>();
   final _contentController = TextEditingController();
   final priorityFormKey = GlobalKey<FormFieldState<String>>();
@@ -21,7 +22,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
   final deadlineFormKey = GlobalKey<FormFieldState<String>>();
   final _deadlineController = TextEditingController();
   final Map<String, dynamic> formValueStr = {};
-  int valuePriority = 3;
+  int valuePriority = 3; //描画1回目
 
   @override
   void dispose() {
@@ -39,6 +40,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
     final Map arguments = ModalRoute.of(context)!.settings.arguments as Map;
     int index = arguments['id'];
 
+    // 描画1回目の場合のみ
     if (valuePriority == 3) {
       valuePriority = arguments['priority'];
     }
@@ -47,6 +49,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
       appBar: AppBar(
         title: const Text('Todo編集'),
       ),
+      //databaseの非同期
       body: FutureBuilder(
           future: database.showTodoItem(index),
           builder: (context, snapshot) {
@@ -194,6 +197,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () {
+                        //データベースに保存して、provider更新
                         if (formKey.currentState!.validate()) {
                           formValueStr['title'] =
                               titleFormKey.currentState?.value ?? '';

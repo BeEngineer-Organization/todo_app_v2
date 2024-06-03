@@ -28,10 +28,10 @@ class MyTodoApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const TodoListPage(),
-        '/detail': (context) => const TodoDetailPage(),
-        '/add': (context) => const TodoAddPage(),
-        '/edit': (context) => const TodoEditPage(),
-        '/calendar': (context) => const CalendarPage(),
+        '/detail': (context) => const TodoDetailPage(), //詳細
+        '/add': (context) => const TodoAddPage(), //追加
+        '/edit': (context) => const TodoEditPage(), //編集
+        '/calendar': (context) => const CalendarPage(), //カレンダー
         // '/notification':(context) => const NotifierPage(),
       },
     );

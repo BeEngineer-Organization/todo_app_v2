@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'todo_db.dart';
 
+// データベースのrefresh用
 final todoProvider = FutureProvider((ref) => TodoItemDatabase());
 
 final bottomBarProvider = NotifierProvider<BottomBarNotifier, int>(

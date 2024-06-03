@@ -22,6 +22,7 @@ class TodoListPage extends ConsumerWidget {
           title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          // databaseの非同期
           FutureBuilder<List<int>>(
             future: Future.wait([
               database.getTodoItemsCount(),
@@ -56,12 +57,14 @@ class TodoListPage extends ConsumerWidget {
                     Navigator.of(context).pushNamed(
                       '/notification',
                     );
-                  }, icon: const Icon(Icons.notifications))
+                  },
+                  icon: const Icon(Icons.notifications))
             ],
           )
         ],
       )),
       body: Center(
+        // databaseのプロバイダーの非同期
         child: asyncValue.when(
           data: (database) {
             return FutureBuilder<List<TodoItem>>(
@@ -90,7 +93,7 @@ class TodoListPage extends ConsumerWidget {
                                 // チェックボックスが変更されたときの処理
                                 database.changeTodoItem(todoItems[index].id,
                                     todoItems[index].isCompleted);
-                                ref.refresh(todoProvider);
+                                ref.refresh(todoProvider); //databaseの再取得
                               },
                               value: todoItems[index].isCompleted,
                             ),
@@ -103,6 +106,7 @@ class TodoListPage extends ConsumerWidget {
                             },
                           );
                         } else {
+                          // リストタイルを潰す
                           return const SizedBox.shrink();
                         }
                       });

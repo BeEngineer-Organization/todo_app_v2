@@ -29,8 +29,10 @@ class TodoDetailPage extends ConsumerWidget {
             })
       ])),
       body: Center(
+          // FutureProviderの非同期
           child: asyncValue.when(
         data: (todo) {
+          // データベースの非同期
           return FutureBuilder<TodoItem>(
               future: database.showTodoItem(index),
               builder: (context, snapshot) {
