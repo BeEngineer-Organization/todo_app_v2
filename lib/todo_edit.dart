@@ -13,13 +13,25 @@ class TodoEditPage extends ConsumerStatefulWidget {
 class _TodoEditPageState extends ConsumerState<TodoEditPage> {
   final formKey = GlobalKey<FormState>();
   final titleFormKey = GlobalKey<FormFieldState<String>>();
+  final _titleController = TextEditingController(text: 'initial');
   final contentFormKey = GlobalKey<FormFieldState<String>>();
+  final _contentController = TextEditingController();
   final priorityFormKey = GlobalKey<FormFieldState<String>>();
-  final priorityController = TextEditingController();
+  final _priorityController = TextEditingController();
   final deadlineFormKey = GlobalKey<FormFieldState<String>>();
-  final deadlineController = TextEditingController();
+  final _deadlineController = TextEditingController();
   final Map<String, dynamic> formValueStr = {};
   int valuePriority = 3;
+
+  @override
+  void dispose() {
+    super.dispose();
+    // TextEditingControllerは不要になったらdisposeする
+    _titleController.dispose();
+    _contentController.dispose();
+    _priorityController.dispose();
+    _deadlineController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +58,12 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
               throw Exception('データが空です。');
             } else {
               final todoItem = snapshot.data!;
+              // 描画１回目
+              if (_titleController.text == 'initial') {
+                _titleController.text = todoItem.title;
+                _contentController.text = todoItem.content;
+                _deadlineController.text = todoItem.deadline;
+              }
               return Form(
                 key: formKey,
                 child: Center(
@@ -56,7 +74,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                     width: 300,
                     child: TextFormField(
                       key: titleFormKey,
-                      initialValue: todoItem.title,
+                      controller: _titleController,
                       decoration: const InputDecoration(
                         labelText: 'タイトル',
                       ),
@@ -77,7 +95,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                     height: 200,
                     child: TextFormField(
                       key: contentFormKey,
-                      initialValue: todoItem.content,
+                      controller: _contentController,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: '内容',
@@ -145,9 +163,9 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                     width: 300,
                     child: TextFormField(
                         key: deadlineFormKey,
-                        controller: deadlineController,
-                        decoration: InputDecoration(
-                          labelText: "変更前${todoItem.deadline}",
+                        controller: _deadlineController,
+                        decoration: const InputDecoration(
+                          labelText: 'deadline',
                         ),
                         onTap: () async {
                           FocusScope.of(context)
@@ -159,15 +177,15 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                             lastDate: DateTime(2100),
                           );
                           if (date != null) {
-                            deadlineController.text =
+                            _deadlineController.text =
                                 date.toIso8601String().substring(0, 10);
                           } else {
-                            deadlineController.text = todoItem.deadline;
+                            _deadlineController.text = todoItem.deadline;
                           }
                         },
                         validator: (value) {
                           return value == null || value.isEmpty
-                              ? deadlineController.text = todoItem.deadline
+                              ? _deadlineController.text = todoItem.deadline
                               : null;
                         }),
                   ),
