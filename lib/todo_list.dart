@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod をインポート
 import 'todo_db.dart';
 import 'providers_db.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class TodoListPage extends ConsumerWidget {
   // ConsumerWidget を継承
@@ -77,39 +78,40 @@ class TodoListPage extends ConsumerWidget {
                 } else {
                   final todoItems = snapshot.data ?? [];
                   return ListView.builder(
-                      itemCount: todoItems.length,
-                      itemBuilder: (context, index) {
-                        if (todoItems[index].isCompleted == false &&
-                                bottomBarIndex == 0 ||
-                            todoItems[index].isCompleted == true &&
-                                bottomBarIndex == 1) {
-                          return ListTile(
-                            title: Text(
-                                '${todoItems[index].id} ${todoItems[index].title}'),
-                            trailing: Checkbox(
-                              activeColor: Colors.green,
-                              checkColor: Colors.white,
-                              onChanged: (value) {
-                                // チェックボックスが変更されたときの処理
-                                database.changeTodoItem(todoItems[index].id,
-                                    todoItems[index].isCompleted);
-                                ref.refresh(todoProvider); //databaseの再取得
-                              },
-                              value: todoItems[index].isCompleted,
-                            ),
-                            onTap: () {
-                              Navigator.of(context).pushNamed(
-                                // 詳細ページには、タップされたアイテムのインデックスを伝える
-                                '/detail',
-                                arguments: todoItems[index].id,
-                              );
+                    itemCount: todoItems.length,
+                    itemBuilder: (context, index) {
+                      if (todoItems[index].isCompleted == false &&
+                              bottomBarIndex == 0 ||
+                          todoItems[index].isCompleted == true &&
+                              bottomBarIndex == 1) {
+                        return ListTile(
+                          title: Text(
+                              '${todoItems[index].id} ${todoItems[index].title}'),
+                          trailing: Checkbox(
+                            activeColor: Colors.green,
+                            checkColor: Colors.white,
+                            onChanged: (value) {
+                              // チェックボックスが変更されたときの処理
+                              database.changeTodoItem(todoItems[index].id,
+                                  todoItems[index].isCompleted);
+                              ref.invalidate(todoProvider); //databaseの再取得
                             },
-                          );
-                        } else {
-                          // リストタイルを潰す
-                          return const SizedBox.shrink();
-                        }
-                      });
+                            value: todoItems[index].isCompleted,
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                              // 詳細ページには、タップされたアイテムのインデックスを伝える
+                              '/detail',
+                              arguments: todoItems[index].id,
+                            );
+                          },
+                        );
+                      } else {
+                        // リストタイルを潰す
+                        return const SizedBox.shrink();
+                      }
+                    },
+                  );
                 }
               },
             );

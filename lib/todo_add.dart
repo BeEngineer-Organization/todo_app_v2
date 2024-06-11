@@ -34,7 +34,6 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
         key: formKey,
         child: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-          // タイトル
           Container(
             margin: const EdgeInsets.only(bottom: 32),
             padding: const EdgeInsets.all(4),
@@ -167,7 +166,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                   formValueStr['deadline'] =
                       deadlineFormKey.currentState?.value ?? '';
                   database.insertTodoItem(formValueStr);
-                  ref.refresh(todoProvider);
+                  ref.invalidate(todoProvider);
                   Navigator.of(context).pop();
                 }
               },

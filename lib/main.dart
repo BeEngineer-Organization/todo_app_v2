@@ -32,7 +32,7 @@ class MyTodoApp extends StatelessWidget {
         '/add': (context) => const TodoAddPage(), //追加
         '/edit': (context) => const TodoEditPage(), //編集
         '/calendar': (context) => const CalendarPage(), //カレンダー
-        // '/notification':(context) => const NotifierPage(),
+        // '/notification': (context) => const NotifierPage(),
       },
     );
   }

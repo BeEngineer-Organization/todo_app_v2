@@ -24,7 +24,7 @@ class TodoDetailPage extends ConsumerWidget {
             child: const Icon(Icons.delete),
             onPressed: () {
               database.deleteTodoItem(index);
-              ref.refresh(todoProvider);
+              ref.invalidate(todoProvider);
               Navigator.of(context).pop();
             })
       ])),
@@ -102,7 +102,7 @@ class TodoDetailPage extends ConsumerWidget {
                             onPressed: () {
                               database.changeTodoItem(
                                   index, todoItem.isCompleted); // 修正
-                              ref.refresh(todoProvider);
+                              ref.invalidate(todoProvider);
                               Navigator.of(context).pop();
                             },
                             child: todoItem.isCompleted // 修正
