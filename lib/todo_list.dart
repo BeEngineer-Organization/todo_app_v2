@@ -93,7 +93,7 @@ class TodoListPage extends ConsumerWidget {
                                 // チェックボックスが変更されたときの処理
                                 database.changeTodoItem(todoItems[index].id,
                                     todoItems[index].isCompleted);
-                                ref.refresh(todoProvider); //databaseの再取得
+                                ref.invalidate(todoProvider); //databaseの再取得
                               },
                               value: todoItems[index].isCompleted,
                             ),

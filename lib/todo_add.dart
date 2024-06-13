@@ -167,7 +167,7 @@ class _TodoAddPageState extends ConsumerState<TodoAddPage> {
                   formValueStr['deadline'] =
                       deadlineFormKey.currentState?.value ?? '';
                   database.insertTodoItem(formValueStr);
-                  ref.refresh(todoProvider);
+                  ref.invalidate(todoProvider);
                   Navigator.of(context).pop();
                 }
               },

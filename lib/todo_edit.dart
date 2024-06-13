@@ -207,7 +207,7 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                           formValueStr['deadline'] =
                               deadlineFormKey.currentState?.value ?? '';
                           database.updateTodoItem(index, formValueStr);
-                          ref.refresh(todoProvider);
+                          ref.invalidate(todoProvider);
                           Navigator.of(context).pop();
                         }
                       },
