@@ -51,123 +51,120 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
       ),
       //databaseの非同期
       body: FutureBuilder(
-        future: database.showTodoItem(index),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('ロード中...');
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          } else if (snapshot.data == null) {
-            throw Exception('データが空です。');
-          } else {
-            final todoItem = snapshot.data!;
-            // 描画１回目
-            if (_titleController.text == 'initial') {
-              _titleController.text = todoItem.title;
-              _contentController.text = todoItem.content;
-              _deadlineController.text = todoItem.deadline;
-            }
-            return Form(
-              key: formKey,
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min, 
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 32),
-                      padding: const EdgeInsets.all(4),
-                      width: 300,
-                      child: TextFormField(
-                        key: titleFormKey,
-                        controller: _titleController,
-                        decoration: const InputDecoration(
-                          labelText: 'タイトル',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'タイトルを入力してください。';
-                          } else if (value.length > 30) {
-                            return 'タイトルは30文字以内で入力してください。';
-                          }
-                          return null;
-                        },
+          future: database.showTodoItem(index),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text('ロード中...');
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            } else if (snapshot.data == null) {
+              throw Exception('データが空です。');
+            } else {
+              final todoItem = snapshot.data!;
+              // 描画１回目
+              if (_titleController.text == 'initial') {
+                _titleController.text = todoItem.title;
+                _contentController.text = todoItem.content;
+                _deadlineController.text = todoItem.deadline;
+              }
+              return Form(
+                key: formKey,
+                child: Center(
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 32),
+                    padding: const EdgeInsets.all(4),
+                    width: 300,
+                    child: TextFormField(
+                      key: titleFormKey,
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: 'タイトル',
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'タイトルを入力してください。';
+                        } else if (value.length > 30) {
+                          return 'タイトルは30文字以内で入力してください。';
+                        }
+                        return null;
+                      },
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 32),
-                      padding: const EdgeInsets.all(4),
-                      width: 300,
-                      height: 200,
-                      child: TextFormField(
-                        key: contentFormKey,
-                        controller: _contentController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: '内容',
-                          alignLabelWithHint: true,
-                        ),
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        minLines: 8,
-                        validator: (value) {
-                          return value == null || value.isEmpty
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 32),
+                    padding: const EdgeInsets.all(4),
+                    width: 300,
+                    height: 200,
+                    child: TextFormField(
+                      key: contentFormKey,
+                      controller: _contentController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: '内容',
+                        alignLabelWithHint: true,
+                      ),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      minLines: 8,
+                      validator: (value) {
+                        return value == null || value.isEmpty
                             ? '内容を入力してください。'
                             : null;
-                        },
-                      ),
+                      },
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Row(
-                          children: [
-                            Radio(
-                              value: 0,
-                              groupValue: valuePriority,
-                              onChanged: (int? value) {
-                                setState(() {
-                                  valuePriority = value!;
-                                });
-                              },
-                            ),
-                            const Text('高')
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Radio(
-                              value: 1,
-                              groupValue: valuePriority,
-                              onChanged: (int? value) {
-                                setState(() {
-                                  valuePriority = value!;
-                                });
-                              },
-                            ),
-                            const Text('中')
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Radio(
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Row(
+                        children: [
+                          Radio(
+                            value: 0,
+                            groupValue: valuePriority,
+                            onChanged: (int? value) {
+                              setState(() {
+                                valuePriority = value!;
+                              });
+                            },
+                          ),
+                          const Text('高')
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
+                            value: 1,
+                            groupValue: valuePriority,
+                            onChanged: (int? value) {
+                              setState(() {
+                                valuePriority = value!;
+                              });
+                            },
+                          ),
+                          const Text('中')
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio(
                               value: 2,
                               groupValue: valuePriority,
                               onChanged: (int? value) {
                                 setState(() {
                                   valuePriority = value!;
                                 });
-                              }
-                            ),
-                            const Text('低')
-                          ],
-                        ),
-                      ],
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 32),
-                      padding: const EdgeInsets.all(4),
-                      width: 300,
-                      child: TextFormField(
+                              }),
+                          const Text('低')
+                        ],
+                      ),
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 32),
+                    padding: const EdgeInsets.all(4),
+                    width: 300,
+                    child: TextFormField(
                         key: deadlineFormKey,
                         controller: _deadlineController,
                         decoration: const InputDecoration(
@@ -191,40 +188,36 @@ class _TodoEditPageState extends ConsumerState<TodoEditPage> {
                         },
                         validator: (value) {
                           return value == null || value.isEmpty
-                            ? _deadlineController.text = todoItem.deadline
-                            : null;
+                              ? _deadlineController.text = todoItem.deadline
+                              : null;
+                        }),
+                  ),
+                  SizedBox(
+                    width: 300,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        //データベースに保存して、provider更新
+                        if (formKey.currentState!.validate()) {
+                          formValueStr['title'] =
+                              titleFormKey.currentState?.value ?? '';
+                          formValueStr['content'] =
+                              contentFormKey.currentState?.value ?? ''; // 修正
+                          formValueStr['priority'] = valuePriority;
+                          formValueStr['deadline'] =
+                              deadlineFormKey.currentState?.value ?? '';
+                          database.updateTodoItem(index, formValueStr);
+                          ref.refresh(todoProvider);
+                          Navigator.of(context).pop();
                         }
-                      ),
+                      },
+                      child: const Text('編集完了'),
                     ),
-                    SizedBox(
-                      width: 300,
-                      height: 40,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          //データベースに保存して、provider更新
-                          if (formKey.currentState!.validate()) {
-                            formValueStr['title'] =
-                                titleFormKey.currentState?.value ?? '';
-                            formValueStr['content'] =
-                                contentFormKey.currentState?.value ?? ''; // 修正
-                            formValueStr['priority'] = valuePriority;
-                            formValueStr['deadline'] =
-                                deadlineFormKey.currentState?.value ?? '';
-                            database.updateTodoItem(index, formValueStr);
-                            ref.invalidate(todoProvider);
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: const Text('編集完了'),
-                      ),
-                    )
-                  ]
-                )
-              ),
-            );
-          }
-        }
-      ),
+                  )
+                ])),
+              );
+            }
+          }),
     );
   }
 }
