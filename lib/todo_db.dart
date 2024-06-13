@@ -158,4 +158,20 @@ class TodoItemDatabase {
       whereArgs: [id],
     );
   }
+
+  Future<List<String>> deadlineItem(String datetime) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'TodoItem',
+      where: 'deadline = ?',
+      whereArgs: [datetime],
+    );
+    List<String> titles = [];
+    for (var item in maps) {
+      titles.add(
+        item['title'],
+      );
+    }
+    return titles;
+  }
 }

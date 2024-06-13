@@ -71,7 +71,7 @@ class TodoListPage extends ConsumerWidget {
               future: database.getTodoItems(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('いるのこれ');
+                  return const Text('ロード中...');
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 } else {
