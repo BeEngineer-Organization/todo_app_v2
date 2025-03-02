@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'calendar.dart';
+import 'notification.dart';
 import 'todo_add.dart';
 import 'todo_detail.dart';
 import 'todo_list.dart';
+import 'todo_edit.dart';
 
 void main() {
+  tz.initializeTimeZones();
+  WidgetsFlutterBinding.ensureInitialized();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+      ?.requestNotificationsPermission();
   runApp(
     const ProviderScope(
       child: MyTodoApp(),
     ),
   );
+  morningNotify();
+  deadlineNotify();
 }
 
 class MyTodoApp extends StatelessWidget {
@@ -26,23 +41,11 @@ class MyTodoApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const TodoListPage(),
-        '/detail': (context) => const TodoDetailPage(),
-        '/add': (context) => const TodoAddPage(),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/detail') {
-          return MaterialPageRoute(
-            builder: (context) {
-              return const TodoDetailPage();
-            },
-          );
-        } else {
-          return MaterialPageRoute(
-            builder: (context) {
-              return const TodoListPage();
-            },
-          );
-        }
+        '/detail': (context) => const TodoDetailPage(), //詳細
+        '/add': (context) => const TodoAddPage(), //追加
+        '/edit': (context) => const TodoEditPage(), //編集
+        '/calendar': (context) => const CalendarPage(), //カレンダー
+        // '/notification':(context) => const NotifierPage(),
       },
     );
   }
