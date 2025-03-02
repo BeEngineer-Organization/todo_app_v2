@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'calendar.dart';
 import 'notification.dart';
 import 'todo_add.dart';
 import 'todo_detail.dart';
-import 'todo_list.dart';
 import 'todo_edit.dart';
+import 'todo_list.dart';
 
 void main() {
   tz.initializeTimeZones();
@@ -45,7 +46,6 @@ class MyTodoApp extends StatelessWidget {
         '/add': (context) => const TodoAddPage(), //追加
         '/edit': (context) => const TodoEditPage(), //編集
         '/calendar': (context) => const CalendarPage(), //カレンダー
-        // '/notification':(context) => const NotifierPage(),
       },
     );
   }
